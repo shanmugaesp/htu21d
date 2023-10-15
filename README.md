@@ -1,29 +1,24 @@
-# htu21d
-HDU21D sensor data logger
-
-
-
-This Arduino code is designed to read temperature and humidity data from an Adafruit_HTU21DF sensor and log the data to an SD card.
+This Arduino code is designed to read temperature and humidity data from an Adafruit_HTU21DF sensor and log the data to an SD card. Let's break down the code:
 
 ### Libraries
-
+```cpp
 #include <Wire.h>
 #include <Adafruit_HTU21DF.h>
 #include <SD.h>
-
+```
 These are the libraries used in the code:
 - `Wire.h`: Used for I2C communication.
 - `Adafruit_HTU21DF.h`: Library for the Adafruit HTU21DF sensor.
 - `SD.h`: Library for reading and writing to SD cards.
 
 ### Pin Configuration
-
+```cpp
 const int chipSelect = 10;
-
+```
 Defines the chip select pin for the SD card module. In this case, it's pin 10.
 
 ### Sensor and SD Card Initialization
-
+```cpp
 Adafruit_HTU21DF htu = Adafruit_HTU21DF();
 
 void setup() {
@@ -39,14 +34,14 @@ void setup() {
     while (1);
   }
 }
-
+```
 In the `setup()` function:
 - Serial communication is initiated at a baud rate of 9600.
 - The SD card is initialized, and if it fails, an error message is printed, and the program enters an infinite loop.
 - The HTU21DF sensor is initialized, and if it fails, an error message is printed, and the program enters an infinite loop.
 
 ### Main Loop
-
+```cpp
 void loop() {
   float temperature = htu.readTemperature();
   float humidity = htu.readHumidity();
@@ -61,7 +56,7 @@ void loop() {
 
   delay(1000);
 }
-
+```
 In the `loop()` function:
 - Temperature and humidity data are read from the HTU21DF sensor.
 - The data is printed to the Serial monitor.
@@ -69,7 +64,7 @@ In the `loop()` function:
 - There is a delay of 1000 milliseconds (1 second) before the next iteration.
 
 ### Data Logging Function
-
+```cpp
 void logData(float temperature, float humidity) {
   File dataFile = SD.open("test.txt", FILE_WRITE);
 
@@ -85,7 +80,7 @@ void logData(float temperature, float humidity) {
     Serial.println("Error opening datalog.txt");
   }
 }
-
+```
 The `logData` function:
 - Opens the file "test.txt" on the SD card for writing.
 - If the file is available, it writes a line of data containing a timestamp, temperature, and humidity.
