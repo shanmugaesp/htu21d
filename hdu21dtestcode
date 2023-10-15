@@ -1,0 +1,70 @@
+//HDU21D Sensor Data logger
+//This code is developed by sp
+//https://github.com/shanmugaesp
+//IF you have any doubt / requirements Discuss in github
+/****************************************************************************/
+
+#include <Wire.h>
+#include <Adafruit_HTU21DF.h>
+#include <SD.h>
+
+// Pin configuration for SD card module
+const int chipSelect = 10;    // This pin indicates chip select , use can any chip select pin eg,4,10
+Adafruit_HTU21DF htu = Adafruit_HTU21DF();
+
+/****************************************************************************/
+void setup() {
+  Serial.begin(9600);
+
+  // Initialize the SD card
+  if (!SD.begin(chipSelect)) {
+    Serial.println("SD card initialization failed!");
+    while (1);
+  }
+
+  // Initialize the HTU21D sensor
+  if (!htu.begin()) {
+    Serial.println("Couldn't find sensor! Check wiring and power. Is the sensor connected?");
+    while (1);
+  }
+}
+
+/****************************************************************************/
+void loop() {
+  // Read sensor data
+  float temperature = htu.readTemperature();
+  float humidity = htu.readHumidity();
+
+  // Print data to Serial monitor
+  Serial.print("Temperature: ");
+  Serial.print(temperature);
+  Serial.print(" °C, Humidity: ");
+  Serial.print(humidity);
+  Serial.println(" %");
+
+  // Log data to SD card
+  logData(temperature, humidity);
+
+  delay(1000);  // Delay for 1 seconds before the next reading
+}
+/****************************************************************************/
+void logData(float temperature, float humidity) {
+  // Open the file for writing
+  File dataFile = SD.open("test.txt", FILE_WRITE);  //"test.txt" means that data saving file name
+
+  // If the file is available, write to it
+  if (dataFile) {
+    dataFile.print(millis()); // Timestamp
+    dataFile.print(", ");
+    dataFile.print(temperature);
+    dataFile.print(", ");
+    dataFile.print(humidity);
+    dataFile.println();
+
+    // Close the file
+    dataFile.close();
+  } else {
+    Serial.println("Error opening datalog.txt");
+  }
+}
+
